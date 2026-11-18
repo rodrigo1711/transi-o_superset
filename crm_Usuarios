@@ -1,0 +1,15 @@
+--antes da `etapa TIpo Alterado`
+SELECT 
+    users.`id`, 
+    users.`user_name`, 
+    users.`first_name`, 
+    users.`last_name`, 
+    users.`userlabel`, 
+    users.`isinativo`,
+    REPLACE(`department`, 'Comercial Quimicos', 'Comercial Químicos') AS `department`,`title`, --recorta tudo após o sobrenome
+    SUBSTRING_INDEX(`userlabel`, ' ', 2) AS `Nome Abrev`,
+FROM 
+    `nutriplant`.`vtiger_users` `users`
+
+ORDER BY `users`.`userlabel` asc
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------

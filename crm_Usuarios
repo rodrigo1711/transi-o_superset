@@ -1,8 +1,8 @@
---antes da `etapa TIpo Alterado`
-SELECT 
-    users.`id`, 
-    users.`user_name`, 
-    users.`first_name`, 
+-- ia adicionar etapa de retipagem, mas não foi necessário 
+SELECT
+    CAST(users.`id`AS CHAR)AS id, 
+    users.`user_name`AS, 
+    users.`first_name`,
     users.`last_name`, 
     users.`userlabel`, 
     users.`isinativo`,
@@ -12,4 +12,35 @@ FROM
     `nutriplant`.`vtiger_users` `users`
 
 ORDER BY `users`.`userlabel` asc
----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-----
+
+
+schema 
+CREATE OR REPLACE VIEW nutriplant.trf_crm_Usuarios AS
+SELECT
+    CAST(users.`id` AS CHAR) AS id,
+    TRIM(users.`user_name`) AS user_name,
+    TRIM(users.`first_name`) AS first_name,
+    TRIM(users.`last_name`) AS last_name,
+    TRIM(users.`userlabel`) AS userlabel,
+    TRIM(users.`isinativo`) AS isinativo,
+    REPLACE(REPLACE(TRIM(users.`department`), 'Comercial Quimicos','Comercial Químicos'), 'CEO', 'Exportação') AS department,
+    users.`title`,
+    SUBSTRING_INDEX(users.`userlabel`, ' ', 2) AS `Nome Abrev`,
+    CASE
+        WHEN users.id IN (145, 80, 139, 12, 112, 128, 126, 21, 41, 98, 79, 138, 121, 97, 75, 23, 24, 89)
+            THEN 'Agro'
+        WHEN users.id IN (9, 141, 101, 114, 100, 66, 49, 113, 8, 131, 11, 65, 127)
+            THEN 'Químicos'
+        WHEN users.id = 6
+            THEN 'Clientes Estratégicos'
+        WHEN users.id IN (106, 92, 5, 132, 133)
+            THEN 'Exportação'
+        WHEN users.id = 1
+            THEN 'TI'
+        ELSE 'Outros'
+    END AS Gerência,
+FROM 
+    `nutriplant`.`vtiger_users` AS users
+ORDER BY 
+    users.`userlabel` ASC;

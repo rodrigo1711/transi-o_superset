@@ -1,4 +1,6 @@
--- 
+--
+ps remover coluna que adiciona setor por id
+
 select * from nutriplant_view.crm_Usuarios_semcarga users
 where users.id in (
   9, 76, 80, 109, 59, 1, 81, 139, 125, 120, 146, 68, 12, 14, 129, 88,

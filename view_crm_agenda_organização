@@ -1,0 +1,40 @@
+   CREATE VIEW crm_Agenda_Organizacao as 
+   SELECT
+                    nutriplant.vtiger_account.`accountname`                             AS 'empresa',
+                    COALESCE(nutriplant.agr.`groupname`,nutriplant.aur.`userlabel`)               AS 'Agenda Responsável',
+                    nutriplant.auc.`userlabel`                                          AS 'responsavel',
+                    nutriplant.vtiger_activity.`subject`                                AS 'assunto',
+                    CAST(nutriplant.vtiger_crmentitycalendar.`createdtime` AS date)     AS 'data criacao',
+                    nutriplant.vtiger_activity.`date_start`                             AS 'data inicio',
+                    CAST(nutriplant.vtiger_account.`data_do_ultimo_agendamento` AS date) AS 'dt alteracao',
+                    CAST(nutriplant.vtiger_account.`data_do_ultimo_agendamento` AS time) AS 'hr alteracao',        
+                    nutriplant.vtiger_account.`accountstatus`                         AS 'campo alterado',
+                    nutriplant.vtiger_activity.`status`                               AS 'valor anterior',
+                    nutriplant.vtiger_activity.`eventstatus`                          AS 'novo valor',
+                    nutriplant.vtiger_accountscf.`cf_779`                             AS 'cf 779',
+                    nutriplant.vtiger_account.`rating`                                AS 'Org',
+                    nutriplant.vtiger_account.`account_no`                            AS 'account no',
+                    nutriplant_view.u_semcarga.`id`                                        AS 'id',
+                    nutriplant_view.u_semcarga.`userlabel`                                AS 'Nome Abrev'
+                    
+                FROM nutriplant.vtiger_account
+                INNER JOIN nutriplant.vtiger_crmentity ON nutriplant.vtiger_crmentity.crmid = nutriplant.vtiger_account.accountid
+                LEFT JOIN nutriplant.vtiger_accountscf ON nutriplant.vtiger_account.accountid = nutriplant.vtiger_accountscf.accountid
+                INNER JOIN nutriplant.vtiger_seactivityrel ON nutriplant.vtiger_seactivityrel.crmid = nutriplant.vtiger_account.accountid
+                INNER JOIN nutriplant.vtiger_activity ON nutriplant.vtiger_activity.activityid = nutriplant.vtiger_seactivityrel.activityid AND nutriplant.vtiger_activity.activitytype != 'Emails'
+                INNER JOIN nutriplant.vtiger_activitycf ON nutriplant.vtiger_activitycf.activityid = nutriplant.vtiger_activity.activityid
+                INNER JOIN nutriplant.vtiger_crmentity vtiger_crmentitycalendar ON nutriplant.vtiger_crmentitycalendar.crmid = nutriplant.vtiger_activity.activityid AND nutriplant.vtiger_crmentitycalendar.deleted = 0 AND nutriplant.vtiger_crmentitycalendar.setype = 'Calendar'
+                LEFT JOIN nutriplant.vtiger_users users2 ON nutriplant.vtiger_crmentity.smcreatorid = users2.id
+                INNER JOIN nutriplant.vtiger_users auc ON auc.id = nutriplant.vtiger_crmentitycalendar.smcreatorid
+                LEFT JOIN nutriplant.vtiger_users aur ON aur.id = nutriplant.vtiger_crmentitycalendar.smownerid
+                LEFT JOIN nutriplant.vtiger_groups agr ON agr.groupid = nutriplant.vtiger_crmentitycalendar.smownerid
+                
+               LEFT JOIN nutriplant_view.crm_Usuarios_semcarga u_semcarga ON 
+               lower(trim(nutriplant.auc.userlabel)) COLLATE utf8mb4_unicode_ci =
+               lower(trim(nutriplant_view.u_semcarga.userlabel)) COLLATE utf8mb4_unicode_ci
+                
+                
+                order by vtiger_crmentitycalendar.createdtime desc
+              --  where auc.`userlabel` = "Reinaldo Silva" AND
+                where vtiger_account.`accountname` = "AGROQUIMA PRODUTOS AGROPECUARIOS LTDA"
+                
